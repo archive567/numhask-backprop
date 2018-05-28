@@ -14,7 +14,7 @@
 import NumHask.Backprop ()
 import NumHask.KTuple
 import NumHask.Prelude
-import Numeric.Backprop
+import Numeric.Backprop hiding (zero,one)
 import System.Random
 
 type Model p a b
@@ -80,3 +80,13 @@ main = do
   writeFile
     "other/answer.md"
     ("alpha: " <> show alpha <> " beta: " <> show beta)
+
+-- | examples from intro
+--
+-- >>> gradBP (\x -> x^2 + 3) (9 :: Double)
+-- 18.0
+--
+-- >>> gradBP2 (\x xs -> sum (map (**2) (sequenceVar xs)) / x) (9::Double) ([1,6,2]::[Double])
+-- (-0.5061728395061729,[0.2222222222222222,1.3333333333333333,0.4444444444444444])
+
+

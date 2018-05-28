@@ -27,9 +27,9 @@ import Numeric.Backprop as BP
 instance (Backprop a, Additive a, Reifies s W) => AdditiveMagma (BVar s a) where
   plus = liftOp2 . op2 $ \x y -> (x `plus` y, \g -> (g, g))
 
-instance (Backprop a, Additive a, MultiplicativeUnital a, Reifies s W) =>
+instance (Backprop a, Additive a, Reifies s W) =>
          AdditiveUnital (BVar s a) where
-  zero = NH.zero
+  zero = constVar NH.zero
 
 instance (Backprop a, Additive a, Reifies s W) =>
          AdditiveAssociative (BVar s a)
@@ -60,9 +60,9 @@ instance (Backprop a, MultiplicativeUnital a, Reifies s W) =>
   times =
     liftOp2 . op2 $ \x y -> (x `times` y, \g -> (y `times` g, x `times` g))
 
-instance (Backprop a, Additive a, MultiplicativeUnital a, Reifies s W) =>
+instance (Backprop a, MultiplicativeUnital a, Reifies s W) =>
          MultiplicativeUnital (BVar s a) where
-  one = NH.one
+  one = constVar NH.one
 
 instance (Backprop a, MultiplicativeUnital a, Reifies s W) =>
          MultiplicativeAssociative (BVar s a)
@@ -91,14 +91,14 @@ instance ( Backprop a
 instance (Backprop a, Distribution a, MultiplicativeUnital a, Reifies s W) =>
          Distribution (BVar s a)
 
-instance (Backprop a, Additive a, Semiring a, Reifies s W) =>
+instance (Backprop a, Semiring a, Reifies s W) =>
          Semiring (BVar s a)
 
 instance (Backprop a, Ring a, Reifies s W) => Ring (BVar s a)
 
 instance (Backprop a, CRing a, Reifies s W) => CRing (BVar s a)
 
-instance (Backprop a, Reifies s W, Additive a, StarSemiring a) =>
+instance (Backprop a, Reifies s W, StarSemiring a) =>
          StarSemiring (BVar s a) where
   plus' = liftOp1 . op1 $ \x -> (star x, plus')
   star = liftOp1 . op1 $ \x -> (plus' x, (`times` star x))
@@ -106,7 +106,7 @@ instance (Backprop a, Reifies s W, Additive a, StarSemiring a) =>
 instance (Backprop a, KleeneAlgebra a, Reifies s W) =>
          KleeneAlgebra (BVar s a)
 
-instance (Backprop a, Reifies s W, Additive a, InvolutiveRing a) =>
+instance (Backprop a, Reifies s W, InvolutiveRing a) =>
          InvolutiveRing (BVar s a) where
   adj = liftOp1 . op1 $ \x -> (adj x, adj)
 
@@ -134,7 +134,7 @@ instance ( Backprop a
          , MultiplicativeGroup a
          ) =>
          TrigField (BVar s a) where
-  pi = NH.pi
+  pi = constVar NH.pi
   sin = liftOp1 . op1 $ \x -> (sin x, (* cos x))
   cos = liftOp1 . op1 $ \x -> (cos x, (* negate (sin x)))
   asin = liftOp1 . op1 $ \x -> (asin x, (/ sqrt (NH.one - x * x)))
