@@ -1,0 +1,13 @@
+resolver: lts-11.9 # nightly-2018-05-19
+
+packages:
+  - .
+  - ../numhask/numhask
+  - ../numhask/numhask-prelude
+
+extra-deps:
+  - backprop-0.2.3.0
+  - type-combinators-0.2.4.3
+  #- hmatrix-backprop-0.1.2.1
+  #- numhask-prelude-0.0.4.1
+  #- numhask-0.2.1.0
