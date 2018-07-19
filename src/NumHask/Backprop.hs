@@ -222,7 +222,6 @@ instance (Backprop a, Reifies s W, Additive a, Signed a) =>
 fromIntegralBVar ::
      ( Reifies s W
      , Backprop a
-     , Backprop b
      , ToInteger a
      , FromInteger b
      , ToInteger b
@@ -237,7 +236,6 @@ fromIntegralBVar =
 fromRationalBVar ::
      ( Reifies s W
      , Backprop a
-     , Backprop b
      , ToRatio a
      , FromRatio b
      , ToRatio b
