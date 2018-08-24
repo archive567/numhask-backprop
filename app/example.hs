@@ -27,7 +27,7 @@ linReg p x = b * x + a
     (a, b) = splitKT p
 
 squaredErrorGrad ::
-     (Backprop p, Backprop b, Multiplicative b, AdditiveGroup b)
+     (Backprop p, Backprop b, Multiplicative b, Subtractive b)
   => Model p a b -- ^ Model
   -> a -- ^ Observed input
   -> b -- ^ Observed output
@@ -40,9 +40,9 @@ trainModel ::
      ( Backprop p
      , FromRatio p
      , Multiplicative p
-     , AdditiveGroup p
+     , Subtractive p
      , Multiplicative b
-     , AdditiveGroup b
+     , Subtractive b
      , Backprop b
      )
   => Model p a b -- ^ model to train
@@ -53,11 +53,11 @@ trainModel f = foldl' $ \p (x, y) -> p - 0.1 * squaredErrorGrad f x y p
 
 trainModelIO ::
      ( Multiplicative p
-     , AdditiveGroup p
+     , Subtractive p
      , FromRatio p
      , Backprop p
      , Multiplicative b
-     , AdditiveGroup b
+     , Subtractive b
      , Backprop b
      , Random p
      )

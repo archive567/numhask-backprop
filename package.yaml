@@ -35,7 +35,6 @@ library:
     - backprop
     - numhask
     - numhask-prelude
-    - numhask-prelude
     - random
 
 executables:
@@ -64,4 +63,6 @@ tests:
     - doctest
     - numhask-backprop
     - numhask-prelude
+    - numhask-hedgehog
+    - hedgehog
     - tasty

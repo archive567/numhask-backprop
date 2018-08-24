@@ -31,7 +31,8 @@ type family HKD f a where
 data KTupleF a b f = KT
   { ktA :: HKD f a
   , ktB :: HKD f b
-  } deriving (Generic)
+  }
+  deriving (Generic)
 
 type KTuple a b = KTupleF a b Identity
 
@@ -72,76 +73,34 @@ binOp ::
   -> KTupleF a3 b3 f3
 binOp opA opB (KT a b) (KT a' b') = KT (opA a a') (opB b b')
 
-instance (AdditiveMagma a, AdditiveMagma b) => AdditiveMagma (KTuple a b) where
-  plus = binOp plus plus
-
-instance (AdditiveUnital a, AdditiveUnital b) =>
-         AdditiveUnital (KTuple a b) where
+instance (Additive a, Additive b) => Additive (KTuple a b) where
+  (+) = binOp (+) (+)
   zero = KT zero zero
 
-instance (AdditiveAssociative a, AdditiveAssociative b) =>
-         AdditiveAssociative (KTuple a b)
-
-instance (AdditiveCommutative a, AdditiveCommutative b) =>
-         AdditiveCommutative (KTuple a b)
-
-instance (AdditiveInvertible a, AdditiveInvertible b) =>
-         AdditiveInvertible (KTuple a b) where
+instance (Subtractive a, Subtractive b) =>
+         Subtractive (KTuple a b) where
   negate = unaryOp negate negate
 
-instance (AdditiveIdempotent a, AdditiveIdempotent b) =>
-         AdditiveIdempotent (KTuple a b)
-
-instance (Additive a, Additive b) => Additive (KTuple a b)
-
-instance (AdditiveGroup a, AdditiveGroup b) => AdditiveGroup (KTuple a b)
-
-instance (MultiplicativeMagma a, MultiplicativeMagma b) =>
-         MultiplicativeMagma (KTuple a b) where
-  times = binOp times times
-
-instance (MultiplicativeUnital a, MultiplicativeUnital b) =>
-         MultiplicativeUnital (KTuple a b) where
+instance (Multiplicative a, Multiplicative b) =>
+         Multiplicative (KTuple a b) where
+  (*) = binOp (*) (*)
   one = KT one one
 
-instance (MultiplicativeAssociative a, MultiplicativeAssociative b) =>
-         MultiplicativeAssociative (KTuple a b)
-
-instance (MultiplicativeCommutative a, MultiplicativeCommutative b) =>
-         MultiplicativeCommutative (KTuple a b)
-
-instance (MultiplicativeInvertible a, MultiplicativeInvertible b) =>
-         MultiplicativeInvertible (KTuple a b) where
+instance (Divisive a, Divisive b) =>
+         Divisive (KTuple a b) where
   recip = unaryOp recip recip
 
-instance (MultiplicativeIdempotent a, MultiplicativeIdempotent b) =>
-         MultiplicativeIdempotent (KTuple a b)
-
-instance (Multiplicative a, Multiplicative b) =>
-         Multiplicative (KTuple a b)
-
-instance (MultiplicativeGroup a, MultiplicativeGroup b) =>
-         MultiplicativeGroup (KTuple a b)
-
-instance (Distribution a, Distribution b) => Distribution (KTuple a b)
-
-instance (Semiring a, Semiring b) => Semiring (KTuple a b)
-
-instance (Ring a, Ring b) => Ring (KTuple a b)
-
-instance (CRing a, CRing b) => CRing (KTuple a b)
+instance (Distributive a, Distributive b) => Distributive (KTuple a b)
 
 instance (StarSemiring a, StarSemiring b) => StarSemiring (KTuple a b) where
   star = unaryOp star star
-  plus' = unaryOp plus' plus'
-
-instance (KleeneAlgebra a, KleeneAlgebra b) => KleeneAlgebra (KTuple a b)
+  plus = unaryOp plus plus
 
 instance (InvolutiveRing a, InvolutiveRing b) =>
          InvolutiveRing (KTuple a b) where
   adj = unaryOp adj adj
 
-instance (Semifield a, Semifield b) => Semifield (KTuple a b)
+instance (IntegralDomain a, IntegralDomain b) => IntegralDomain (KTuple a b)
 
 instance (Field a, Field b) => Field (KTuple a b)
 
@@ -175,6 +134,8 @@ instance ( Eq b
          , QuotientField a c
          , QuotientField b d
          , Integral (KTuple c d)
+         , Subtractive c
+         , Subtractive d
          ) =>
          QuotientField (KTuple a b) (KTuple c d) where
   properFraction (KT a b) = (KT ia ib, KT ra rb)
@@ -182,7 +143,7 @@ instance ( Eq b
       (ia, ra) = properFraction a
       (ib, rb) = properFraction b
 
-instance (Signed a, Signed b) => Signed (KTuple a b) where
+instance (Multiplicative a, Signed a, Multiplicative b, Signed b) => Signed (KTuple a b) where
   sign = unaryOp sign sign
   abs = unaryOp abs abs
 

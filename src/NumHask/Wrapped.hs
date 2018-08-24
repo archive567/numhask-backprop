@@ -20,38 +20,18 @@ module NumHask.Wrapped
 import NumHask.Prelude as NH
 import qualified Numeric.Backprop as IBP
 import Numeric.Backprop.Explicit as BP
-import Test.QuickCheck.Arbitrary
-import Test.QuickCheck.Gen
 
 newtype NH a = NH
   { unwrap :: a
   } deriving ( Eq
              , Ord
              , Show
-             , AdditiveMagma
-             , AdditiveAssociative
-             , AdditiveCommutative
-             , AdditiveUnital
-             , AdditiveIdempotent
              , Additive
-             , AdditiveInvertible
-             , AdditiveGroup
-             , MultiplicativeMagma
-             , MultiplicativeUnital
-             , MultiplicativeAssociative
-             , MultiplicativeCommutative
-             , MultiplicativeIdempotent
+             , Subtractive
              , Multiplicative
-             , MultiplicativeInvertible
-             , MultiplicativeGroup
-             , Distribution
-             , Semiring
-             , Ring
-             , CRing
-             , StarSemiring
-             , KleeneAlgebra
-             , InvolutiveRing
-             , Semifield
+             , Divisive
+             , Distributive
+             , IntegralDomain
              , Field
              , ExpField
              , TrigField
@@ -63,17 +43,19 @@ newtype NH a = NH
              , FromInteger
              , FromRatio
              , ToRatio
-             , Arbitrary
+             , Epsilon
              )
 
 instance ( Eq b
          , Ord a
+         , Ord b
+         , Subtractive b
          , Field a
          , Field b
          , QuotientField a b
          , Integral b
-         , MultiplicativeGroup a
-         , MultiplicativeGroup b
+         , Divisive a
+         , Divisive b
          ) =>
          QuotientField (NH a) (NH b) where
   properFraction (NH a) =
@@ -90,11 +72,8 @@ instance (Metric a b) => Metric (NH a) (NH b) where
   distanceL2 (NH a) (NH b) = NH $ distanceL2 a b
   distanceLp (NH p) (NH a) (NH b) = NH $ distanceLp p a b
 
-instance (Epsilon a) => Epsilon (NH a) where
-  nearZero (NH a) = nearZero a
-
 -- * Backprop instance for a NH wrapped number
-instance (Additive a, MultiplicativeUnital a) => Backprop (NH a) where
+instance (Additive a, Multiplicative a) => Backprop (NH a) where
   zero _ = NH.zero
   one _ = NH.one
   add = (NH.+)
