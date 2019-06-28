@@ -43,6 +43,7 @@ newtype NH a = NH
              , FromInteger
              , FromRatio
              , ToRatio
+             , MeetSemiLattice
              , Epsilon
              )
 
@@ -65,12 +66,10 @@ instance ( Eq b
 instance (Normed a b) => Normed (NH a) (NH b) where
   normL1 (NH a) = NH $ normL1 a
   normL2 (NH a) = NH $ normL2 a
-  normLp (NH p) (NH a) = NH $ normLp p a
 
 instance (Metric a b) => Metric (NH a) (NH b) where
   distanceL1 (NH a) (NH b) = NH $ distanceL1 a b
   distanceL2 (NH a) (NH b) = NH $ distanceL2 a b
-  distanceLp (NH p) (NH a) (NH b) = NH $ distanceLp p a b
 
 -- * Backprop instance for a NH wrapped number
 instance (Additive a, Multiplicative a) => Backprop (NH a) where

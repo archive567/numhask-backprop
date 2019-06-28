@@ -161,7 +161,8 @@ instance ( Ord a
   properFraction = splitKT . liftOp1 properFractionOp
 
 instance (Backprop a, Reifies s W, UpperBoundedField a, Subtractive a) =>
-         UpperBoundedField (BVar s a)
+         UpperBoundedField (BVar s a) where
+  -- isNaN = liftOp1 . op1 $ \x -> (isNaN x)
 
 instance (Backprop a, Reifies s W, LowerBoundedField a) =>
          LowerBoundedField (BVar s a)
@@ -199,7 +200,6 @@ fromRationalBVar ::
 fromRationalBVar =
   liftOp1 . op1 $ \x -> (,) (NH.fromRational x) (NH.fromRational . toRatio)
 
--- * Backprop instance for a NH wrapped number
 instance Backprop (Ratio Integer) where
   zero _ = NH.zero
   one _ = NH.one

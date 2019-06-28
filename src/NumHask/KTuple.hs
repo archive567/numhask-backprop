@@ -122,7 +122,8 @@ instance (TrigField a, TrigField b) => TrigField (KTuple a b) where
   atanh = unaryOp atanh atanh
 
 instance (UpperBoundedField a, UpperBoundedField b) =>
-         UpperBoundedField (KTuple a b)
+         UpperBoundedField (KTuple a b) where
+  -- isNaN = unaryOp isNaN isNaN
 
 instance (LowerBoundedField a, LowerBoundedField b) =>
          LowerBoundedField (KTuple a b)
@@ -150,12 +151,10 @@ instance (Multiplicative a, Signed a, Multiplicative b, Signed b) => Signed (KTu
 instance (Normed a c, Normed b d) => Normed (KTuple a b) (KTuple c d) where
   normL1 = unaryOp normL1 normL1
   normL2 = unaryOp normL2 normL2
-  normLp (KT pa pb) = unaryOp (normLp pa) (normLp pb)
 
 instance (Metric a a, Metric b b) => Metric (KTuple a b) (KTuple a b) where
   distanceL1 = binOp distanceL1 distanceL1
   distanceL2 = binOp distanceL1 distanceL1
-  distanceLp (KT pa pb) = binOp (distanceLp pa) (distanceLp pb)
 
 instance (FromInteger a, FromInteger b) => FromInteger (KTuple a b) where
   fromInteger r = KT (fromInteger r) (fromInteger r)

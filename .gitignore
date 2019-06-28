@@ -4,3 +4,4 @@ TAGS
 /.DS_Store
 /numhask-backprop.cabal
 */.dir-locals.el
+/dist-newstyle

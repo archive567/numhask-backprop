@@ -9,15 +9,10 @@ Status](https://travis-ci.org/tonyday567/numhask-backprop.svg)](https://travis-c
 
 numhask-backprop
 
-results
--------
-
-alpha: -1.0000000000000029 beta: 2.0000000000000036
-
 recipe
 ------
 
-    stack build --test --exec "$(stack path --local-install-root)/bin/numhask-backprop" --exec "$(stack path --local-bin)/pandoc -f markdown -i other/_readme.md -t markdown -o readme.md --filter pandoc-include --mathjax" --file-watch
+    stack build --test --exec "$(stack path --local-install-root)/bin/numhask-backprop" --file-watch
 
 reference
 ---------

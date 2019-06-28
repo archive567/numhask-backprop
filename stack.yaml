@@ -5,6 +5,7 @@ packages:
   - ../numhask/numhask
   - ../numhask/numhask-prelude
   - ../numhask/numhask-hedgehog
+  - ../numhask/numhask-space
 
 extra-deps:
   - backprop-0.2.6.1
