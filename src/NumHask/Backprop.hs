@@ -142,6 +142,8 @@ properFractionOp =
            then nan
            else NH.fromIntegral i)
 
+
+
 instance ( Ord a
          , Ord b
          , Backprop a
@@ -172,33 +174,22 @@ instance (Backprop a, Reifies s W, Additive a, Signed a) =>
   sign = liftOp1 . op1 $ \x -> (sign x, const NH.zero)
   abs = liftOp1 . op1 $ \x -> (abs x, (* sign x))
 
--- | not possible to define ToInteger or FromInteger because of the raw Integer type in the API.
-fromIntegralBVar ::
-     ( Reifies s W
-     , Backprop a
-     , ToInteger a
-     , FromInteger b
-     , ToInteger b
-     , FromInteger a
-     )
-  => BVar s a
-  -> BVar s b
-fromIntegralBVar =
-  liftOp1 . op1 $ \x -> (,) (NH.fromIntegral x) (NH.fromIntegral . toInteger)
+instance (Additive b, Backprop b, Reifies s W, FromIntegral a b) => FromIntegral (BVar s a) (BVar s b) where
+  fromIntegral_ =
+    liftOp1 . op1 $ \x -> (,) (NH.fromIntegral_ x) (const NH.zero)
 
--- | not possible to define ToRatio or FromRatio because of the raw Ratio Integer type in the API.
-fromRationalBVar ::
-     ( Reifies s W
-     , Backprop a
-     , ToRatio a
-     , FromRatio b
-     , ToRatio b
-     , FromRatio a
-     )
-  => BVar s a
-  -> BVar s b
-fromRationalBVar =
-  liftOp1 . op1 $ \x -> (,) (NH.fromRational x) (NH.fromRational . toRatio)
+instance (Additive a, Backprop a, Reifies s W, ToIntegral a b) => ToIntegral (BVar s a) (BVar s b) where
+  toIntegral_ =
+    liftOp1 . op1 $ \x -> (,) (NH.toIntegral_ x) (const NH.zero)
+
+instance (Additive b, Backprop b, Reifies s W, FromRatio a b) => FromRatio (BVar s a) (BVar s b) where
+  fromRatio =
+    liftOp1 . op1 $ \x -> (,) (fromRatio x) (const NH.zero)
+
+instance (Additive b, Backprop b, Reifies s W, ToRatio a b) => ToRatio (BVar s a) (BVar s b) where
+  toRatio =
+    liftOp1 . op1 $ \x -> (,) (toRatio x) (const NH.zero)
+
 
 instance Backprop (Ratio Integer) where
   zero _ = NH.zero

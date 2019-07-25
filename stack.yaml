@@ -1,18 +1,20 @@
-resolver: nightly-2018-08-17
+resolver: lts-13.29
+  # nightly-2018-08-17
 
 packages:
   - .
-  - ../numhask/numhask
-  - ../numhask/numhask-prelude
-  - ../numhask/numhask-hedgehog
-  - ../numhask/numhask-space
+  #- ../numhask/numhask
+  #- ../numhask/numhask-prelude
+  #- ../numhask/numhask-hedgehog
+  #- ../numhask/numhask-space
 
 extra-deps:
   - backprop-0.2.6.1
   # - type-combinators-0.2.4.3
-  #- github: tonyday567/numhask
-  #  commit: 06f4cb735871dc3d7efe54b8827340bcb9d1efa4
-  #  subdirs:
-  #    - numhask
-  #    - numhask-prelude
-  #    - numhask-hedgehog
+  - github: tonyday567/numhask
+    commit: 7d0d7333b63494069f3338530cd8530ad158400f
+    subdirs:
+      - numhask
+      - numhask-prelude
+      - numhask-hedgehog
+      - numhask-space

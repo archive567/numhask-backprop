@@ -13,14 +13,13 @@ import Hedgehog as H
 import qualified Prelude as P
 
 tests :: H.TestLimit -> IO Bool
-tests n = do
-  bAdditive <- assertProps "additive" n
+tests n = 
+  assertProps "additive" n
     (integral_ :: H.Gen Int) additiveBVarProps
-  return bAdditive
 
 -- | additive
 additiveBVarProps ::
-     (Backprop a, Eq a, Show a, Multiplicative a, Additive a) => Gen a -> [(PropertyName, Property)]
+     (Backprop a, Eq a, Show a, Additive a) => Gen a -> [(PropertyName, Property)]
 additiveBVarProps src =
   [ ( "associative: (a + b) + c = a + (b + c)"
     , ternary src

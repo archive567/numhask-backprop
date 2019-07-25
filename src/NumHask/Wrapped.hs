@@ -39,13 +39,17 @@ newtype NH a = NH
              , LowerBoundedField
              , Signed
              , Integral
-             , ToInteger
-             , FromInteger
              , FromRatio
              , ToRatio
              , MeetSemiLattice
              , Epsilon
              )
+
+instance (FromIntegral a Integer) => FromIntegral (NH a) Integer where
+  fromIntegral_ a = NH (fromIntegral_ a)
+
+instance (ToIntegral a Integer) => ToIntegral (NH a) Integer where
+  toIntegral_ (NH a) = toIntegral_ a
 
 instance ( Eq b
          , Ord a

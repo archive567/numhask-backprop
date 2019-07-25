@@ -38,10 +38,10 @@ squaredErrorGrad model x targ =
 
 trainModel ::
      ( Backprop p
-     , FromRatio p
+     , FromRational p
      , Multiplicative p
      , Subtractive p
-     , Multiplicative b
+    , Multiplicative b
      , Subtractive b
      , Backprop b
      )
