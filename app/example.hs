@@ -54,7 +54,7 @@ trainModel f = foldl' $ \p (x, y) -> p - 0.1 * squaredErrorGrad f x y p
 trainModelIO ::
      ( Multiplicative p
      , Subtractive p
-     , FromRatio p
+     , FromRational p
      , Backprop p
      , Multiplicative b
      , Subtractive b

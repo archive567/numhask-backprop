@@ -19,11 +19,19 @@ module NumHask.Backprop where
 import NumHask.KTuple
 import NumHask.Prelude as NH
 import Numeric.Backprop as BP
+-- import Control.Lens hiding (Magma, magma)
 
 -- | unwrapped BVar orphan instances for numhask
--- Fixme: Epsilon, FromInteger, ToInteger have problematic APIs (raw Bool, Integer's in types)
 -- Fixme: not sure how to proceed with Normed, Metric
+
 -- numhask classes
+instance (Backprop a, Magma a, Reifies s W) =>
+         Magma (BVar s a) where
+  magma = liftOp2 . op2 $ \x y -> (x `magma` y, \g -> (g, g))
+
+instance (Backprop a, Idempotent a, Reifies s W) =>
+         Idempotent (BVar s a)
+
 instance (Backprop a, Additive a, Reifies s W) => Additive (BVar s a) where
   (+) = liftOp2 . op2 $ \x y -> (x + y, \g -> (g, g))
   zero = constVar NH.zero
@@ -44,30 +52,20 @@ instance (Backprop a, Reifies s W, Subtractive a, Divisive a) =>
 instance (Backprop a, Distributive a, Reifies s W) =>
          Distributive (BVar s a)
 
-instance (Backprop a, CommutativeRing a, Reifies s W) =>
-  CommutativeRing (BVar s a)
+instance (Subtractive a, Backprop a, IntegralDomain a, Reifies s W) =>
+         IntegralDomain (BVar s a)
+
+instance (Backprop a, Reifies s W, InvolutiveRing a) =>
+         InvolutiveRing (BVar s a) where
+  adj = liftOp1 . op1 $ \x -> (adj x, adj)
 
 instance (Backprop a, Reifies s W, StarSemiring a) =>
          StarSemiring (BVar s a) where
   plus = liftOp1 . op1 $ \x -> (star x, plus)
   star = liftOp1 . op1 $ \x -> (plus x, (* star x))
 
-instance (Backprop a, Magma a, Reifies s W) =>
-         Magma (BVar s a) where
-  magma = liftOp2 . op2 $ \x y -> (x `magma` y, \g -> (g, g))
-
-instance (Backprop a, Idempotent a, Reifies s W) =>
-         Idempotent (BVar s a)
-
 instance (Backprop a, KleeneAlgebra a, Reifies s W) =>
          KleeneAlgebra (BVar s a)
-
-instance (Backprop a, Reifies s W, InvolutiveRing a) =>
-         InvolutiveRing (BVar s a) where
-  adj = liftOp1 . op1 $ \x -> (adj x, adj)
-
-instance (Backprop a, IntegralDomain a, Subtractive a, Reifies s W) =>
-         IntegralDomain (BVar s a)
 
 instance (Backprop a, Field a, Subtractive a, Reifies s W) => Field (BVar s a)
 
@@ -142,8 +140,6 @@ properFractionOp =
            then nan
            else NH.fromIntegral i)
 
-
-
 instance ( Ord a
          , Ord b
          , Backprop a
@@ -162,17 +158,34 @@ instance ( Ord a
          QuotientField (BVar s a) (BVar s b) where
   properFraction = splitKT . liftOp1 properFractionOp
 
-instance (Backprop a, Reifies s W, UpperBoundedField a, Subtractive a) =>
-         UpperBoundedField (BVar s a) where
-  -- isNaN = liftOp1 . op1 $ \x -> (isNaN x)
-
-instance (Backprop a, Reifies s W, LowerBoundedField a) =>
-         LowerBoundedField (BVar s a)
-
 instance (Backprop a, Reifies s W, Additive a, Signed a) =>
          Signed (BVar s a) where
   sign = liftOp1 . op1 $ \x -> (sign x, const NH.zero)
   abs = liftOp1 . op1 $ \x -> (abs x, (* sign x))
+
+instance (Additive a, Multiplicative a, Backprop a, Reifies s W, MeetSemiLattice a) =>
+  MeetSemiLattice (BVar s a) where
+  (/\) = liftOp2 . op2 $ \x y ->
+    (x /\ y,
+      \g -> ( g * bool NH.zero NH.one (x /\ y == x)
+           , g * bool NH.zero NH.one (x /\ y == x)))
+
+instance (Additive a, Multiplicative a, Backprop a, Reifies s W, JoinSemiLattice a) =>
+  JoinSemiLattice (BVar s a) where
+  (\/) = liftOp2 . op2 $ \x y ->
+    (x \/ y,
+      \g -> ( g * bool NH.zero NH.one (x \/ y == x)
+           , g * bool NH.zero NH.one (x \/ y == x)))
+
+instance (Additive a, Multiplicative a, Backprop a, Reifies s W, Epsilon a) =>
+         Epsilon (BVar s a) where
+  epsilon = constVar epsilon
+
+instance (Backprop a, Reifies s W, UpperBoundedField a, Subtractive a) =>
+         UpperBoundedField (BVar s a) where
+
+instance (Backprop a, Reifies s W, LowerBoundedField a) =>
+         LowerBoundedField (BVar s a)
 
 instance (Additive b, Backprop b, Reifies s W, FromIntegral a b) => FromIntegral (BVar s a) (BVar s b) where
   fromIntegral_ =
@@ -182,16 +195,38 @@ instance (Additive a, Backprop a, Reifies s W, ToIntegral a b) => ToIntegral (BV
   toIntegral_ =
     liftOp1 . op1 $ \x -> (,) (NH.toIntegral_ x) (const NH.zero)
 
-instance (Additive b, Backprop b, Reifies s W, FromRatio a b) => FromRatio (BVar s a) (BVar s b) where
-  fromRatio =
-    liftOp1 . op1 $ \x -> (,) (fromRatio x) (const NH.zero)
+toRatioOp ::
+     (Additive a, ToRatio a b)
+  => Op '[ a] (KTuple b b)
+toRatioOp =
+  op1 $ \x ->
+    (,)
+      (let (i :% r) = toRatio x
+       in KT i r)
+      (\(KT _ _) -> NH.zero)
 
-instance (Additive b, Backprop b, Reifies s W, ToRatio a b) => ToRatio (BVar s a) (BVar s b) where
-  toRatio =
-    liftOp1 . op1 $ \x -> (,) (toRatio x) (const NH.zero)
+instance (Additive a, Backprop a, Backprop b, Reifies s W, ToRatio a b) => ToRatio (BVar s a) (BVar s b) where
+  toRatio x = (\(n,d) -> n :% d) $ splitKT (liftOp1 toRatioOp x)
 
+fromRatioOp ::
+    (Additive b, Multiplicative b, FromRatio a b)
+  => Op '[b, b] a
+fromRatioOp =
+  op2 $ \n d ->
+    (,)
+      (fromRatio (n:%d))
+      (\_ -> (NH.zero, NH.one))
 
-instance Backprop (Ratio Integer) where
-  zero _ = NH.zero
-  one _ = NH.one
-  add = (NH.+)
+instance (Additive b, Multiplicative b, Backprop b, Reifies s W, FromRatio a b) => FromRatio (BVar s a) (BVar s b) where
+  fromRatio (n:%d) = liftOp2 fromRatioOp n d 
+
+{-
+instance (a ~ b, Signed b, Divisive b, Backprop a, Backprop b, Reifies s W, Normed a b) => Normed (BVar s a) (BVar s b) where
+  normL1 = liftOp1 . op1 $ \x -> (normL1 x, (* ((normL1 x) / x)))
+  normL2 = liftOp1 . op1 $ \x -> (normL2 x, (* ((normL2 x) / x)))
+
+instance (Backprop b, Reifies s W, Metric a b) => Metric (BVar s a) (BVar s b) where
+  distanceL1 a b = undefined -- (distanceL1 a b)
+  distanceL2 a b = undefined -- (distanceL2 a b)
+
+-}
