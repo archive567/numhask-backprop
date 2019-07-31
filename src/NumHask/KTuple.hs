@@ -156,8 +156,12 @@ instance (Metric a a, Metric b b) => Metric (KTuple a b) (KTuple a b) where
   distanceL1 = binOp distanceL1 distanceL1
   distanceL2 = binOp distanceL1 distanceL1
 
-instance (FromInteger a, FromInteger b) => FromIntegral (KTuple a b) Integer where
+instance (FromIntegral a Integer, FromIntegral b Integer) => FromIntegral (KTuple a b) Integer where
   fromIntegral_ r = KT (fromIntegral_ r) (fromIntegral_ r)
 
 instance (FromRatio a c, FromRatio b c) => FromRatio (KTuple a b) c where
   fromRatio r = KT (fromRatio r) (fromRatio r)
+
+instance (FromRational a, FromRational b) => FromRational (KTuple a b) where
+  fromRational r = KT (fromRational r) (fromRational r)
+

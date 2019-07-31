@@ -41,7 +41,7 @@ trainModel ::
      , FromRational p
      , Multiplicative p
      , Subtractive p
-    , Multiplicative b
+     , Multiplicative b
      , Subtractive b
      , Backprop b
      )

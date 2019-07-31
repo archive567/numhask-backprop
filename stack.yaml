@@ -9,10 +9,10 @@ packages:
   #- ../numhask/numhask-space
 
 extra-deps:
-  - backprop-0.2.6.1
+  # - backprop-0.2.6.2
   # - type-combinators-0.2.4.3
   - github: tonyday567/numhask
-    commit: 7d0d7333b63494069f3338530cd8530ad158400f
+    commit: 91df824544709bbec7e5cc7e437897eb551a5a1a
     subdirs:
       - numhask
       - numhask-prelude

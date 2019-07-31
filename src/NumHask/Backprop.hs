@@ -149,8 +149,11 @@ instance ( Ord a
          , UpperBoundedField b
          , UpperBoundedField a
          , FromInteger a
+         , FromIntegral a Integer
+         , Integral b
          , ToInteger b
          , FromInteger b
+         , FromIntegral b Integer
          , Subtractive b
          , Reifies s W
          , QuotientField a b
@@ -192,8 +195,8 @@ instance (Additive b, Backprop b, Reifies s W, FromIntegral a b) => FromIntegral
     liftOp1 . op1 $ \x -> (,) (NH.fromIntegral_ x) (const NH.zero)
 
 instance (Additive a, Backprop a, Reifies s W, ToIntegral a b) => ToIntegral (BVar s a) (BVar s b) where
-  toIntegral_ =
-    liftOp1 . op1 $ \x -> (,) (NH.toIntegral_ x) (const NH.zero)
+  toIntegral =
+    liftOp1 . op1 $ \x -> (,) (NH.toIntegral x) (const NH.zero)
 
 toRatioOp ::
      (Additive a, ToRatio a b)
