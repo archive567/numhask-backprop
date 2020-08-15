@@ -52,7 +52,7 @@ instance (Backprop a, Reifies s W, Subtractive a, Divisive a) =>
 instance (Backprop a, Distributive a, Reifies s W) =>
          Distributive (BVar s a)
 
-instance (Subtractive a, Backprop a, IntegralDomain a, Reifies s W) =>
+instance (Backprop a, IntegralDomain a, Reifies s W) =>
          IntegralDomain (BVar s a)
 
 instance (Backprop a, Reifies s W, InvolutiveRing a) =>
@@ -223,13 +223,7 @@ fromRatioOp =
 instance (Additive b, Multiplicative b, Backprop b, Reifies s W, FromRatio a b) => FromRatio (BVar s a) (BVar s b) where
   fromRatio (n:%d) = liftOp2 fromRatioOp n d 
 
-{-
-instance (a ~ b, Signed b, Divisive b, Backprop a, Backprop b, Reifies s W, Normed a b) => Normed (BVar s a) (BVar s b) where
-  normL1 = liftOp1 . op1 $ \x -> (normL1 x, (* ((normL1 x) / x)))
-  normL2 = liftOp1 . op1 $ \x -> (normL2 x, (* ((normL2 x) / x)))
+instance (a ~ b, Signed b, Divisive b, Backprop a, Reifies s W, Normed a b) => Normed (BVar s a) (BVar s b) where
+  norm = liftOp1 . op1 $ \x -> (norm x, (* ((norm x) / x)))
 
-instance (Backprop b, Reifies s W, Metric a b) => Metric (BVar s a) (BVar s b) where
-  distanceL1 a b = undefined -- (distanceL1 a b)
-  distanceL2 a b = undefined -- (distanceL2 a b)
 
--}

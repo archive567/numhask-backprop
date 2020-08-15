@@ -4,3 +4,4 @@ TAGS
 /.DS_Store
 */.dir-locals.el
 /dist-newstyle
+/stack.yaml.lock

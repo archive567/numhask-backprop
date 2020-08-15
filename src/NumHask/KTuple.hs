@@ -22,7 +22,6 @@ module NumHask.KTuple
 
 import NumHask.Prelude
 import Numeric.Backprop hiding (one, zero)
-import System.Random
 
 type family HKD f a where
   HKD Identity a = a
@@ -46,16 +45,6 @@ splitKT ::
   => BVar s (KTuple a b)
   -> (BVar s a, BVar s b)
 splitKT (splitBV -> KT a b) = (a, b)
-
-instance (Random a, Random b) => Random (KTuple a b) where
-  random g0 = (KT x y, g2)
-    where
-      (x, g1) = random g0
-      (y, g2) = random g1
-  randomR (KT x0 y0, KT x1 y1) g0 = (KT x y, g2)
-    where
-      (x, g1) = randomR (x0, x1) g0
-      (y, g2) = randomR (y0, y1) g1
 
 -- numhask classes
 unaryOp ::
@@ -149,12 +138,7 @@ instance (Multiplicative a, Signed a, Multiplicative b, Signed b) => Signed (KTu
   abs = unaryOp abs abs
 
 instance (Normed a c, Normed b d) => Normed (KTuple a b) (KTuple c d) where
-  normL1 = unaryOp normL1 normL1
-  normL2 = unaryOp normL2 normL2
-
-instance (Metric a a, Metric b b) => Metric (KTuple a b) (KTuple a b) where
-  distanceL1 = binOp distanceL1 distanceL1
-  distanceL2 = binOp distanceL1 distanceL1
+  norm = unaryOp norm norm
 
 instance (FromIntegral a Integer, FromIntegral b Integer) => FromIntegral (KTuple a b) Integer where
   fromIntegral_ r = KT (fromIntegral_ r) (fromIntegral_ r)
