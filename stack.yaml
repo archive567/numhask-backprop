@@ -2,9 +2,10 @@ resolver: nightly-2020-06-25
 
 packages:
   - .
+  - ../numhask
 
 extra-deps:
   - backprop-0.2.6.4
-  - numhask-0.6.0.2
+  # - numhask-0.6.0.2
   - vinyl-0.13.0
 
