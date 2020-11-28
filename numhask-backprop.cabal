@@ -1,6 +1,6 @@
 cabal-version: 2.0
 name:           numhask-backprop
-version:        0.0.1
+version:        0.0.2
 synopsis:       See readme.md
 description:    See readme.md for description.
 category:       project
@@ -30,6 +30,6 @@ library
   build-depends:
     backprop >= 0.2.6 && < 0.2.7,
     base >=4.7 && <5,
-    numhask >= 0.6 && < 0.7
+    numhask >= 0.7 && < 0.8
   default-language: Haskell2010
 

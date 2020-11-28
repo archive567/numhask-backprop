@@ -3,14 +3,15 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE NegativeLiterals #-}
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE NoImplicitPrelude #-}
 {-# OPTIONS_GHC -Wall #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
@@ -28,7 +29,7 @@ instance
   (Backprop a, Reifies s W, Magma a) =>
   Magma (BVar s a)
   where
-  magma = liftOp2 . op2 $ \x y -> (x `magma` y, \g -> (g, g))
+  (⊕) = liftOp2 . op2 $ \x y -> (x ⊕ y, \g -> (g, g))
 
 instance
   (Backprop a, Reifies s W, Idempotent a) =>
@@ -61,10 +62,6 @@ instance
 instance
   (Backprop a, Reifies s W, Distributive a) =>
   Distributive (BVar s a)
-
-instance
-  (Backprop a, Reifies s W, IntegralDomain a) =>
-  IntegralDomain (BVar s a)
 
 instance
   (Backprop a, Reifies s W, InvolutiveRing a) =>
@@ -110,13 +107,23 @@ instance
   asin = liftOp1 . op1 $ \x -> (asin x, (/ sqrt (NH.one - x * x)))
   acos = liftOp1 . op1 $ \x -> (acos x, (/ sqrt (NH.one - x * x)) . negate)
   atan = liftOp1 . op1 $ \x -> (atan x, (/ (x * x + NH.one)))
-
-  -- atan2 = liftOp2 . op2 $ \x y -> undefined -- (atan x, (/ (x * x + NH.one)))
   sinh = liftOp1 . op1 $ \x -> (sinh x, (* cosh x))
   cosh = liftOp1 . op1 $ \x -> (cosh x, (* sinh x))
   asinh = liftOp1 . op1 $ \x -> (tanh x, (/ cosh x ** (NH.one + NH.one)))
   acosh = liftOp1 . op1 $ \x -> (acosh x, (/ sqrt (x * x - NH.one)))
   atanh = liftOp1 . op1 $ \x -> (atanh x, (/ (NH.one - x * x)))
+  -- y = f(x1,x2) = atan2 x1 x2 = atan x1/x2
+  -- z = g(f(x1,x2))
+  -- dz/dx1 = dz/dy dy/dx1
+  -- dy/dx1 = 1/(x2 + x1*x1 / x2)
+  -- dz/dx1 = dz/dy * 1/(x2 + x1*x1 / x2)
+  -- dz/dx2 = dz/dy dy/dx1
+  -- dy/dx2 = 1/(1+ (x1/x2)^2) * -x1/x2^2
+  -- dz/dx2 = dz/dy * -x / (y^2 + x^2)
+  atan2 = liftOp2 . op2 $ \x y -> (atan2 x y, \g ->
+        ( g / (y + x^2/y),
+          g * (-x) / (x^2 + y^2)
+        ))
 
 divModOp ::
   (Subtractive a, Integral a) => Op '[a, a] (KTuple a a)
@@ -261,9 +268,6 @@ fromRatioOp =
 
 instance (Additive b, Multiplicative b, Backprop b, Reifies s W, FromRatio a b) => FromRatio (BVar s a) (BVar s b) where
   fromRatio (n :% d) = liftOp2 fromRatioOp n d
-
-instance (a ~ b, Signed b, Divisive b, Backprop a, Reifies s W, Norm a b) => Norm (BVar s a) (BVar s b) where
-  norm = liftOp1 . op1 $ \x -> (norm x, (* ((norm x) / x)))
 
 instance
   (Backprop a, Reifies s W, Additive a, Signed a) =>
