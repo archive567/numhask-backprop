@@ -4,12 +4,10 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE NegativeLiterals #-}
-{-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# LANGUAGE ViewPatterns #-}
 {-# OPTIONS_GHC -Wall #-}
@@ -112,6 +110,7 @@ instance
   asinh = liftOp1 . op1 $ \x -> (tanh x, (/ cosh x ** (NH.one + NH.one)))
   acosh = liftOp1 . op1 $ \x -> (acosh x, (/ sqrt (x * x - NH.one)))
   atanh = liftOp1 . op1 $ \x -> (atanh x, (/ (NH.one - x * x)))
+  -- https://backprop.jle.im/06-manual-gradients.html
   -- y = f(x1,x2) = atan2 x1 x2 = atan x1/x2
   -- z = g(f(x1,x2))
   -- dz/dx1 = dz/dy dy/dx1

@@ -1,0 +1,4 @@
+- ignore: {name: Use if}
+- ignore: {name: Eta reduce}
+- ignore: {name: Use uncurry}
+- ignore: {name: Use const}

@@ -1,0 +1,4 @@
+-- :set -XRebindableSyntax
+:set -XNegativeLiterals
+:set -XOverloadedStrings
+:set -Wno-type-defaults

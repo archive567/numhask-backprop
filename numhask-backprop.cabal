@@ -23,6 +23,7 @@ library
   exposed-modules:
     NumHask.KTuple
     NumHask.Backprop
+    NumHask.Space.Backprop
   hs-source-dirs:
     src
   default-extensions: NegativeLiterals NoImplicitPrelude OverloadedStrings UnicodeSyntax
@@ -30,6 +31,10 @@ library
   build-depends:
     backprop >= 0.2.6 && < 0.2.7,
     base >=4.7 && <5,
-    numhask >= 0.7 && < 0.8
+    numhask >= 0.7 && < 0.8,
+    numhask-space >= 0.7 && < 0.8,
+    vinyl >= 0.13 && < 0.14,
+    chart-svg
+
   default-language: Haskell2010
 
