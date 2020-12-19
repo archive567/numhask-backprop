@@ -5,3 +5,4 @@ TAGS
 */.dir-locals.el
 /dist-newstyle
 /stack.yaml.lock
+/.hie/

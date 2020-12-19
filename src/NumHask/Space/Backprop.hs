@@ -8,20 +8,17 @@
 {-# LANGUAGE RebindableSyntax #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
 {-# OPTIONS_GHC -Wall #-}
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 
 -- | Backprop instances for NumHask classes.
 module NumHask.Space.Backprop ( rotateP', bEllipse ) where
 
-import NumHask.KTuple (KTuple, KTupleF (..), splitKT)
 import NumHask.Prelude as NH
 import NumHask.Space
 import Numeric.Backprop as BP
-import NumHask.Backprop
+import NumHask.Backprop ()
 import Data.Vinyl.Core
-import Chart
 
 instance (Additive a, Multiplicative a) => Backprop (Point a) where
   zero = const NH.zero
@@ -50,7 +47,7 @@ instance (Backprop a, Reifies s W, TrigField a) =>
   --       = dz/dy Point (negate (cos x)) (negate (sin x))
   --
   ray = liftOp1 . op1 $ \x ->
-    (ray x, (\g -> angle (g * Point (negate (cos x)) (negate (sin x)))))
+    (ray x, \g -> angle (g * Point (negate (cos x)) (negate (sin x))))
 
 
 -- | rotateP

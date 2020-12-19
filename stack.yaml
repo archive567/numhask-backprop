@@ -2,7 +2,6 @@ resolver: nightly-2020-11-19
 
 packages:
   - .
-  - ../chart-svg
 
 extra-deps:
   - numhask-0.7.0.0
