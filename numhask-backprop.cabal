@@ -1,6 +1,6 @@
 cabal-version: 2.0
 name:           numhask-backprop
-version:        0.0.2
+version:        0.0.3
 synopsis:       See readme.md
 description:    See readme.md for description.
 category:       project
